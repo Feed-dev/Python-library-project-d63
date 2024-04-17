@@ -50,6 +50,27 @@ def add():
     return render_template('add.html', form=form)
 
 
+# Route to edit a book's rating
+@app.route('/edit/<int:book_id>', methods=['GET', 'POST'])
+def edit(book_id):
+    book = Book.query.get_or_404(book_id)
+    form = BookForm(obj=book)
+    if form.validate_on_submit():
+        book.rating = form.rating.data
+        db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('edit.html', form=form)
+
+
+# Route to delete a book
+@app.route('/delete/<int:book_id>', methods=['GET', 'POST'])
+def delete(book_id):
+    book = Book.query.get_or_404(book_id)
+    db.session.delete(book)
+    db.session.commit()
+    return redirect(url_for('home'))
+
+
 # Initialize the database
 with app.app_context():
     db.create_all()
